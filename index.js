@@ -12,8 +12,10 @@ app.use(cors({origin: CORS_ORIGIN}));
 const PORT = process.env;
 
 const taskRoutes = require('./routes/tasks');
-
+const userRoutes = require('./routes/user');
+app.use(express.json());
 app.use('/task',taskRoutes);
+app.use('/user', userRoutes);
 
 app.use(express.json());
 
