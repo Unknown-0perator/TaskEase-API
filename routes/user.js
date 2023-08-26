@@ -3,12 +3,13 @@ const express = require('express');
 const router = express.Router();
 const {v4:uuid} = require('uuid');
 const bcrypt = require('bcrypt');
+const cors = require('cors');
 
 router.post('/sign-up',(req, res)=>{
 
-    const plainPassword = req.body.password;
+    const {SALT_ROUNDS} = process.env
 
-    bcrypt.hash(plainPassword, 20).then(hash=>{
+    bcrypt.hash(req.body.password, SALT_ROUNDS).then(hash=>{
         const newUser = {
             id: uuid(),
             f_name: req.body.f_name,
