@@ -6,13 +6,18 @@ const {v4: uuid} = require('uuid');
 
 router.get('/', (req, res)=>{
 
-    knex('task').then((task)=>{
+    knex.select('id', 'title', 'location', 'type', 'status','date', 'budget').from('task').then((task)=>{
         res.json(task)
     })
 
 })
 
-router.get('/:id',(req, res)=>{
+router.get('/:taskId',(req, res)=>{
+    const {taskId} = req.params;
+
+    knex('task').where({id:taskId}).then((task)=>{
+        res.json(task)
+    })
 
 })
 
