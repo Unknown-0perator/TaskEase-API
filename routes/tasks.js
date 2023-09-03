@@ -6,10 +6,14 @@ const {v4: uuid} = require('uuid');
 
 router.get('/', (req, res)=>{
 
-    knex.select('id', 'title', 'location', 'type', 'status','date', 'budget').from('task').then((task)=>{
-        res.json(task)
-    })
-
+    knex
+        .select('task_id', 'title', 'latitude', 'longitude', 'type', 'status','date', 'time', 'budget')
+        .from('tasks')
+        .then((task)=>{
+            res.status(200).json(task)
+        }).catch(err=>{
+            res.status(400).send(`Invalid request ${err}`)
+        })
 })
 
 router.get('/:taskId',(req, res)=>{
