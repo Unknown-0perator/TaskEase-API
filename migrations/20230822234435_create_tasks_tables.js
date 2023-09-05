@@ -6,8 +6,8 @@ exports.up = function (knex) {
             table.string('description').notNullable();
             table.integer('budget').notNullable().defaultTo(0);
             table.string('type').notNullable();
-            table.integer('latitude').notNullable();
-            table.integer('longitude').notNullable();
+            table.double('latitude').notNullable();
+            table.double('longitude').notNullable();
             table.string('status').notNullable();
             table.date('date');
             table.time('time');
