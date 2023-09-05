@@ -15,7 +15,8 @@ const {CORS_ORIGIN} = process.env;
 const {PORT} = process.env;
 
 const taskRoutes = require('./routes/tasks');
-const userRoutes = require('./routes/user');
+const userRoutes = require('./routes/users');
+const authRoutes = require('./routes/auth');
 
 // middleware
 app.use(cors({origin: CORS_ORIGIN}));
@@ -26,6 +27,7 @@ app.use(express.json());
 
 app.use('/tasks',taskRoutes);
 app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
 
 
 
