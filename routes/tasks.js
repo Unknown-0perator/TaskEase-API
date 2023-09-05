@@ -43,7 +43,8 @@ router.get('/:taskId',(req, res)=>{
             'time', 
             'budget',
             'flexible',
-            'poster_id', 'users.first_name as poster_fname', 
+            'poster_id', 
+            'users.first_name as poster_fname', 
             'users.last_name as poster_lname', 
             'helper_id'
         )
@@ -57,6 +58,30 @@ router.get('/:taskId',(req, res)=>{
         })
 
 })
+
+
+router.get('/:taskId/comments', (req, res) => {
+    const {taskId} = req.params;
+    knex
+        .select(
+            'comment_id',
+            'comment_text',
+            'timestamp',
+            'task_id',
+            'comments.user_id',
+            'first_name',
+            'last_name'
+        )
+        .from('comments')
+        .join('users', 'comments.user_id','users.user_id')
+        .where({task_id:taskId}).then((comment)=>{
+            res.status(200).json(comment)
+        })
+        .catch(err=>{
+        res.status(400).send(`Invalid task ID ${err}`)
+        })
+})
+
 
 router.put('/:id', (req,res)=>{
     
