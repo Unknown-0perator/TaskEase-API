@@ -15,7 +15,8 @@ router.get('/', (req, res)=>{
             'type', 
             'status',
             'date', 
-            'time', 
+            'time',
+            'flexible', 
             'budget'
             )
         .from('tasks')
