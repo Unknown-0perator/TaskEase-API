@@ -27,13 +27,18 @@ const authorize = (req, res, next) => {
 router.post('/login', (req, res)=>{
     const {email, password} = req.body;
 
-    knex.select('email', 'password').where({email: email}).then((response)=>{
+    knex.select('email', 'password').from('users').where({email: email}).then((response)=>{
         const user = response[0];
         if (!user){
             res.status(403).json({ token: null, message: `Invalid email` });
         } else {
+            console.log('before hash')
             bcrypt.compare(password, user.password, (err, result)=>{
+                if(err){
+                    console.log(err)
+                }
                 if(result){
+                    console.log('after hash')
                     let token = jwt.sign({ email: user.email }, JWT_SECRET);
                     res.status(200).json({
                     token: token,
@@ -55,3 +60,6 @@ router.get('/profile', authorize, (req, res) => {
         })
         .catch(err => res.status(403).send(`Forbidden: ${err}`))
 });
+
+
+module.exports = router;

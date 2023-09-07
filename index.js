@@ -22,7 +22,7 @@ const authRoutes = require('./routes/auth');
 app.use(cors({origin: CORS_ORIGIN}));
 app.use(express.static('public'));
 app.use(express.json());
-app.use(express.json());
+
 
 
 app.use('/tasks',taskRoutes);
