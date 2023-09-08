@@ -90,6 +90,28 @@ router.put('/:id', (req,res)=>{
 
 router.post('/',(req, res)=>{
 
+    const newTask = {
+        task_id: uuid(),
+        title: req.body.title,
+        description: req.body.description,
+        budget: req.body.budget,
+        type: req.body.type,
+        status: 'Open',
+        latitude: 37.123456,
+        longitude: -121.654321,
+        date: req.body.date,
+        time: req.body.time,
+        flexible: req.body.flexible,
+        poster_id: req.body.poster_id,
+        helper_id: null,
+      }
+
+      knex('tasks').insert(newTask).then((newTask)=>{
+        return res.status(201).json(newTask)
+    }).catch((err)=>{
+        res.status(400).json(`Invalid: ${err}`)
+    })
+
 })
 
 module.exports = router;
