@@ -17,9 +17,11 @@ router.get('/', (req, res)=>{
             'date', 
             'time',
             'flexible', 
-            'budget'
+            'budget',
+            'user_image',
             )
         .from('tasks')
+        .join('users','tasks.poster_id','users.user_id')
         .then((task)=>{
             res.status(200).json(task)
         }).catch(err=>{
@@ -47,7 +49,7 @@ router.get('/:taskId',(req, res)=>{
             'poster_id', 
             'users.first_name as poster_fname', 
             'users.last_name as poster_lname', 
-            'helper_id'
+            'helper_id',
         )
         .from('tasks')
         .join('users','tasks.poster_id','users.user_id')
@@ -57,6 +59,58 @@ router.get('/:taskId',(req, res)=>{
         .catch(err=>{
             res.status(400).send(`Invalid task ID ${err}`)
         })
+
+})
+
+router.get('/:taskId/offer',(req, res)=>{
+
+    const {taskId} = req.params;
+    
+    knex
+        .select(
+            'offer_id', 
+            'task_id', 
+            'offers.user_id', 
+            'offer_amount',
+            'timestamp',
+            'users.first_name', 
+            'users.last_name', 
+        )
+        .from('offers')
+        .join('users','offers.user_id','users.user_id')
+        .where({task_id:taskId}).then((offer)=>{
+            res.status(200).json(offer)
+        })
+        .catch(err=>{
+            res.status(400).send(`Invalid task ID ${err}`)
+        })
+
+})
+
+router.post('/:taskId/offer',(req, res)=>{
+    const {taskId} = req.params;
+    const newOffer = {
+        offer_id: uuid(), 
+        task_id: taskId, 
+        user_id: req.body.user_id, 
+        offer_amount: req.body.offer_amount,
+        timestamp: Date.now(),
+    }
+
+    knex('offers').insert(newOffer).then((newOffer)=>{
+        res.status(201).json(newOffer)
+    }).catch((err)=>{
+        res.status(400).json(`Invalid: ${err}`)
+    }) 
+})
+
+router.delete('/:taskId/offer/:offerId', (req, res)=>{
+    const {taskId, offerId} = req.params;
+    knex('offers').where({task_id: taskId}).andWhere({offer_id: offerId}).del().then(()=>{
+        res.status(204)
+    }).catch(()=>{
+        res.status(400).json({message: `Error withdrawing offer`})
+    })
 
 })
 
@@ -71,7 +125,8 @@ router.get('/:taskId/comments', (req, res) => {
             'task_id',
             'comments.user_id',
             'first_name',
-            'last_name'
+            'last_name',
+            'user_image'
         )
         .from('comments')
         .join('users', 'comments.user_id','users.user_id')
@@ -84,6 +139,15 @@ router.get('/:taskId/comments', (req, res) => {
 })
 
 
+router.get('/user/:userId',(req,res)=>{
+    const {userId} = req.params
+    knex('tasks').where({poster_id: userId}).then(tasks=>{
+        res.status(200).json(tasks)
+    }).catch(err=>{
+        res.status(400).send(`Invalid user ID ${err}`)
+    })
+})
+
 router.put('/:id', (req,res)=>{
     
 })
@@ -94,7 +158,7 @@ router.post('/',(req, res)=>{
         task_id: uuid(),
         title: req.body.title,
         description: req.body.description,
-        budget: req.body.budget,
+        budget: Number(req.body.budget),
         type: req.body.type,
         status: 'Open',
         latitude: 37.123456,

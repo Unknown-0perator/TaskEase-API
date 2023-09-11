@@ -27,7 +27,7 @@ const authorize = (req, res, next) => {
 router.post('/login', (req, res)=>{
     const {email, password} = req.body;
 
-    knex.select('email', 'password').from('users').where({email: email}).then((response)=>{
+    knex('users').where({email: email}).then((response)=>{
         const user = response[0];
         if (!user){
             res.status(403).json({ token: null, message: `Invalid email` });
@@ -56,7 +56,7 @@ router.post('/login', (req, res)=>{
 router.get('/profile', authorize, (req, res) => {
     knex('users').where({ email: req.payload.email })
         .then((response) => {
-            res.status(200).json(response[0]);
+            res.status(200).json(response);
         })
         .catch(err => res.status(403).send(`Forbidden: ${err}`))
 });
