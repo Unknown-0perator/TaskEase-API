@@ -6,11 +6,12 @@ exports.up = function (knex) {
             table.string('description').notNullable();
             table.integer('budget').notNullable().defaultTo(0);
             table.string('type').notNullable();
-            table.double('latitude').notNullable();
-            table.double('longitude').notNullable();
+            table.double('latitude');
+            table.double('longitude');
             table.string('status').notNullable();
-            table.date('date');
-            table.time('time');
+            table.string('date');
+            table.string('time');
+            table.string('posted_time');
             table.boolean('flexible').defaultTo('false')
             table.uuid('poster_id').references('users.user_id').onUpdate('CASCADE')
             .onDelete('CASCADE').notNullable();
