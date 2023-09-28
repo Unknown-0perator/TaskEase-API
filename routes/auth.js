@@ -1,51 +1,51 @@
 const knex = require('knex')(require('../knexfile'));
 const express = require('express');
 const router = express.Router();
-const {v4:uuid} = require('uuid');
+const { v4: uuid } = require('uuid');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 
-const {JWT_SECRET} = process.env;
+const { JWT_SECRET } = process.env;
 
 const authorize = (req, res, next) => {
     const authToken = req.headers.authorization
-    if(!authToken) {
-        return res.status(401).json({message:"No token found"})
+    if (!authToken) {
+        return res.status(401).json({ message: "No token found" })
     }
-    jwt.verify(authToken,JWT_SECRET, (err, decoded)=>{
-        if(err){
-            return res.status(403).json({message: `Invalid Token ${err}`});
-        } else{
+    jwt.verify(authToken, JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({ message: `Invalid Token ${err}` });
+        } else {
             req.payload = decoded;
         }
         next();
     })
 }
 
-router.post('/login', (req, res)=>{
-    const {email, password} = req.body;
+router.post('/login', (req, res) => {
+    const { email, password } = req.body;
 
-    knex('users').where({email: email}).then((response)=>{
+    knex('users').where({ email: email }).then((response) => {
         const user = response[0];
-        if (!user){
+        if (!user) {
             res.status(403).json({ token: null, message: `Invalid email` });
         } else {
             console.log('before hash')
-            bcrypt.compare(password, user.password, (err, result)=>{
-                if(err){
+            bcrypt.compare(password, user.password, (err, result) => {
+                if (err) {
                     console.log(err)
                 }
-                if(result){
+                if (result) {
                     console.log('after hash')
                     let token = jwt.sign({ email: user.email }, JWT_SECRET);
                     res.status(200).json({
-                    token: token,
-                    message: `Logged In`,
-                    user
-                });
-                } else{
+                        token: token,
+                        message: `Logged In`,
+                        user
+                    });
+                } else {
                     res.status(403).json({ token: null, message: `Wrong password.` });
                 }
             })
