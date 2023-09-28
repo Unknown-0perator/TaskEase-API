@@ -1,6 +1,6 @@
 exports.up = function (knex) {
-    return knex.schema 
-        .createTable('tasks', (table)=>{
+    return knex.schema
+        .createTable('tasks', (table) => {
             table.uuid('task_id').primary();
             table.string('title').notNullable();
             table.string('description').notNullable();
@@ -14,9 +14,9 @@ exports.up = function (knex) {
             table.string('posted_time');
             table.boolean('flexible').defaultTo('false')
             table.uuid('poster_id').references('users.user_id').onUpdate('CASCADE')
-            .onDelete('CASCADE').notNullable();
+                .onDelete('CASCADE').notNullable();
             table.uuid('helper_id').references('users.user_id').onUpdate('CASCADE')
-            .onDelete('CASCADE');
+                .onDelete('CASCADE');
             table.timestamp('created_at').defaultTo(knex.fn.now());
         })
 }

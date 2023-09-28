@@ -1,17 +1,17 @@
 const knex = require('knex')(require('../knexfile'));
 const express = require('express');
 const router = express.Router();
-const {v4:uuid} = require('uuid');
+const { v4: uuid } = require('uuid');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 
-router.post('/sign-up',(req, res)=>{
-    
-    knex('users').where({email:req.body.email}).then(response=>{
+router.post('/sign-up', (req, res) => {
+
+    knex('users').where({ email: req.body.email }).then(response => {
         const user = response[0];
-        if(!user){
+        if (!user) {
             const plainPassword = req.body.password;
-            bcrypt.hash(plainPassword, 1).then(hashPassword=>{
+            bcrypt.hash(plainPassword, 1).then(hashPassword => {
                 const newUser = {
                     user_id: uuid(),
                     first_name: req.body.first_name,
@@ -19,18 +19,18 @@ router.post('/sign-up',(req, res)=>{
                     email: req.body.email,
                     password: hashPassword
                 }
-                knex('users').insert(newUser).then((newUser)=>{
+                knex('users').insert(newUser).then((newUser) => {
                     return res.status(201).json(newUser)
-                }).catch((err)=>{
+                }).catch((err) => {
                     res.status(400).json(`Invalid: ${err}`)
                 })
             })
-        } else{
+        } else {
             res.status(400).json(`User Already Exist`)
         }
     })
-    
-    
+
+
 })
 
 

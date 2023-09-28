@@ -115,50 +115,6 @@ router.delete('/:taskId/offer/:offerId', (req, res) => {
 })
 
 
-// GET COMMENTS
-
-router.get('/:taskId/comments', (req, res) => {
-    const { taskId } = req.params;
-    knex
-        .select(
-            'comment_id',
-            'comment_text',
-            'timestamp',
-            'task_id',
-            'comments.user_id',
-            'first_name',
-            'last_name',
-            'user_image'
-        )
-        .from('comments')
-        .join('users', 'comments.user_id', 'users.user_id')
-        .where({ task_id: taskId }).then((comment) => {
-            res.status(200).json(comment)
-        })
-        .catch(err => {
-            res.status(400).send(`Invalid task ID ${err}`)
-        })
-})
-
-
-// POST COMMENTS
-
-router.post('/:taskId/comments', (req, res) => {
-    const { taskId } = req.params;
-    const newComment = {
-        comment_id: uuid(),
-        comment_text: req.body.comment_text,
-        timestamp: Date.now(),
-        task_id: taskId,
-        user_id: req.body.user_id
-    }
-    knex('comments').insert(newComment).then((newComment) => {
-        res.status(201).json(newComment)
-    }).catch((err) => {
-        res.status(400).json(`Invalid: ${err}`)
-    })
-})
-
 router.get('/user/:userId', (req, res) => {
     const { userId } = req.params
     knex('tasks').where({ poster_id: userId }).then(tasks => {

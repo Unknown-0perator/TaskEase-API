@@ -54,7 +54,7 @@ module.exports = [
     email: 'emily@example.com',
     password: 'hashed_password_7',
     user_image: '/profile_images/profile_2.jpg'
-    
+
   },
   {
     user_id: 'c001e62d-e274-49bf-b88d-388da99a8c0e',
