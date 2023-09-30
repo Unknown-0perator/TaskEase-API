@@ -75,6 +75,7 @@ router.get('/:taskId/offer', (req, res) => {
             'timestamp',
             'users.first_name',
             'users.last_name',
+            'users.user_image',
         )
         .from('offers')
         .join('users', 'offers.user_id', 'users.user_id')
